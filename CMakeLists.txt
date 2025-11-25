@@ -12,6 +12,14 @@ FetchContent_Declare(SFML
   SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
+FetchContent_Declare(
+	glm
+	GIT_REPOSITORY https://github.com/g-truc/glm.git
+	GIT_TAG 1.0.2
+)
+
+FetchContent_MakeAvailable(glm)
+
 add_executable(main src/main.cpp)
 target_compile_features(main PRIVATE cxx_std_17)
-target_link_libraries(main PRIVATE SFML::Graphics)
+target_link_libraries(main PRIVATE SFML::Graphics glm::glm)
