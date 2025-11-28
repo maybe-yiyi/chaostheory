@@ -22,7 +22,14 @@ int main() {
   sf::RenderWindow window(sf::VideoMode({1920, 1080}), "Window",
                           sf::State::Fullscreen);
 
-  Particle particle({1.f, 1.f, 0.1f});
+  std::vector<Particle> particles;
+  particles.reserve(1000);
+
+  for (size_t i = 0; i < 1000; i++) {
+    particles.emplace_back(glm::vec3{static_cast<float>(i / 100.f) - 5.0f, 1.0f,
+                                     static_cast<float>(i / 100.f) - 5.0f});
+  }
+
   auto lorenzattractor = [&](const glm::vec3& pos, const float dt) {
     const float sigma = 10.0f;
     const float rho = 28.0f;
@@ -39,7 +46,9 @@ int main() {
   sf::Clock clock;
   while (window.isOpen()) {
     float dt = clock.restart().asSeconds();
-    particle.update(lorenzattractor, dt);
+    std::for_each(particles.begin(), particles.end(), [&](Particle& particle) {
+      particle.update(lorenzattractor, dt);
+    });
 
     while (const std::optional event = window.pollEvent()) {
       if (event->is<sf::Event::Closed>()) {
@@ -54,11 +63,15 @@ int main() {
 
     window.clear(sf::Color::Black);
 
-    sf::CircleShape shape(5);
-    shape.setFillColor(sf::Color::White);
-    shape.setPosition({ 960 + particle.getPosition().x * 10, 540 + particle.getPosition().y * 10 });
+    std::for_each(particles.begin(), particles.end(),
+                  [&](const Particle& particle) {
+                    sf::CircleShape shape(5);
+                    shape.setFillColor(sf::Color::White);
+                    shape.setPosition({960 + particle.getPosition().x * 10,
+                                       540 + particle.getPosition().y * 10});
 
-    window.draw(shape);
+                    window.draw(shape);
+                  });
     window.display();
   }
 
