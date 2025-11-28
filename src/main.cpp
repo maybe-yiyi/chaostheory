@@ -21,6 +21,7 @@ class Particle {
 int main() {
   sf::RenderWindow window(sf::VideoMode({1920, 1080}), "Window",
                           sf::State::Fullscreen);
+  window.setFramerateLimit(60);
 
   std::vector<Particle> particles;
   particles.reserve(1000);
