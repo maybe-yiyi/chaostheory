@@ -4,52 +4,19 @@
 #include <glm/vec3.hpp>
 #include <iostream>
 
-class Particle {
-  glm::vec3 position;
-
- public:
-  Particle(const glm::vec3& pos) : position(pos) {}
-
-  const glm::vec3& getPosition() const { return position; }
-
-  void update(const std::function<glm::vec3(const glm::vec3&, float)>& dynamics,
-              float dt) {
-    position = dynamics(position, dt);
-  }
-};
+#include "Lorenz.hpp"
 
 int main() {
   sf::RenderWindow window(sf::VideoMode({1920, 1080}), "Window",
                           sf::State::Fullscreen);
   window.setFramerateLimit(60);
 
-  std::vector<Particle> particles;
-  particles.reserve(1500);
-
-  for (size_t i = 0; i < 1500; i++) {
-    particles.emplace_back(glm::vec3{static_cast<float>(i / 150.f) - 5.0f, 1.0f,
-                                     static_cast<float>(i / 150.f) - 5.0f});
-  }
-
-  auto lorenzattractor = [&](const glm::vec3& pos, const float dt) {
-    const float sigma = 10.0f;
-    const float rho = 28.0f;
-    const float beta = 8.0f / 3.0f;
-
-    glm::vec3 dpos;
-    dpos.x = sigma * (pos.y - pos.x);
-    dpos.y = pos.x * (rho - pos.z) - pos.y;
-    dpos.z = pos.x * pos.y - beta * pos.z;
-
-    return pos + dpos * dt;
-  };
+  LorenzAttractor lorenzAttractor(1500);
 
   sf::Clock clock;
   while (window.isOpen()) {
     float dt = clock.restart().asSeconds();
-    std::for_each(particles.begin(), particles.end(), [&](Particle& particle) {
-      particle.update(lorenzattractor, dt);
-    });
+    lorenzAttractor.updateParticles(dt);
 
     while (const std::optional event = window.pollEvent()) {
       if (event->is<sf::Event::Closed>()) {
@@ -64,7 +31,8 @@ int main() {
 
     window.clear(sf::Color::Black);
 
-    std::for_each(particles.begin(), particles.end(),
+    std::for_each(lorenzAttractor.getParticles().begin(),
+                  lorenzAttractor.getParticles().end(),
                   [&](const Particle& particle) {
                     sf::CircleShape shape(2);
                     shape.setFillColor(sf::Color::White);
