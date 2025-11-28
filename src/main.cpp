@@ -24,11 +24,11 @@ int main() {
   window.setFramerateLimit(60);
 
   std::vector<Particle> particles;
-  particles.reserve(1000);
+  particles.reserve(1500);
 
-  for (size_t i = 0; i < 1000; i++) {
-    particles.emplace_back(glm::vec3{static_cast<float>(i / 100.f) - 5.0f, 1.0f,
-                                     static_cast<float>(i / 100.f) - 5.0f});
+  for (size_t i = 0; i < 1500; i++) {
+    particles.emplace_back(glm::vec3{static_cast<float>(i / 150.f) - 5.0f, 1.0f,
+                                     static_cast<float>(i / 150.f) - 5.0f});
   }
 
   auto lorenzattractor = [&](const glm::vec3& pos, const float dt) {
@@ -66,7 +66,7 @@ int main() {
 
     std::for_each(particles.begin(), particles.end(),
                   [&](const Particle& particle) {
-                    sf::CircleShape shape(5);
+                    sf::CircleShape shape(2);
                     shape.setFillColor(sf::Color::White);
                     shape.setPosition({960 + particle.getPosition().x * 10,
                                        540 + particle.getPosition().y * 10});
