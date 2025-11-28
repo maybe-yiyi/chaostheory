@@ -1,28 +1,26 @@
-#include <iostream>
-#include <functional>
-
 #include <SFML/Graphics.hpp>
-#include <glm/vec3.hpp>
+#include <functional>
 #include <glm/mat3x3.hpp>
+#include <glm/vec3.hpp>
+#include <iostream>
 
 class Particle {
   glm::vec3 position;
 
-public:
-  Particle(const glm::vec3& pos)
-      : position(pos) {}
+ public:
+  Particle(const glm::vec3& pos) : position(pos) {}
 
-  const glm::vec3& getPosition() const {
-    return position;
-  }
+  const glm::vec3& getPosition() const { return position; }
 
-  void update(const std::function<glm::vec3(const glm::vec3&, float)>& dynamics, float dt) {
+  void update(const std::function<glm::vec3(const glm::vec3&, float)>& dynamics,
+              float dt) {
     position = dynamics(position, dt);
   }
 };
 
 int main() {
-  sf::RenderWindow window(sf::VideoMode({1920, 1080}), "Window", sf::State::Fullscreen);
+  sf::RenderWindow window(sf::VideoMode({1920, 1080}), "Window",
+                          sf::State::Fullscreen);
 
   Particle particle({1.f, 1.f, 0.1f});
   auto lorenzattractor = [&](const glm::vec3& pos, const float dt) {
@@ -43,7 +41,7 @@ int main() {
     float dt = clock.restart().asSeconds();
     particle.update(lorenzattractor, dt);
 
-    while(const std::optional event = window.pollEvent()) {
+    while (const std::optional event = window.pollEvent()) {
       if (event->is<sf::Event::Closed>()) {
         window.close();
       } else if (event->is<sf::Event::KeyPressed>()) {
