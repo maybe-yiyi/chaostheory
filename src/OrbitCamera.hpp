@@ -1,49 +1,46 @@
 #pragma once
 #include <glm/gtc/constants.hpp>
-#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
 class OrbitCamera {
   glm::vec3 center;
+  glm::vec3 position;  // relative to center
   glm::vec3 upVector;
   float minRadius;
-  float radius;
-  float azimuthAngle;
-  float polarAngle;
 
  public:
-  OrbitCamera(const glm::vec3& centerPos, float radius, float azim,
-              float polarAngle)
+  OrbitCamera(const glm::vec3& centerPos, const glm::vec3& upVec,
+              float minRadius, float radius)
       : center(centerPos),
-        radius(radius),
-        azimuthAngle(azim),
-        polarAngle(polarAngle) {}
+        upVector(upVec),
+        minRadius(minRadius),
+        position(glm::vec3(radius, 0.0f, 0.0f)) {}
 
-  glm::vec3 getPosition() const {
-    float x = center.x + radius * cos(polarAngle) * sin(azimuthAngle);
-    float y = center.y + radius * sin(polarAngle);
-    float z = center.z + radius * cos(polarAngle) * cos(azimuthAngle);
-    return glm::vec3{x, y, z};
+  void orbitYaw(float angleDelta) {
+    glm::mat4 rotationMatrix =
+        glm::rotate(glm::mat4(1.0f), angleDelta, upVector);
+    position = glm::vec3(rotationMatrix * glm::vec4(position, 1.0f));
   }
 
-  void rotateAzimuth(float deltaAzim) {
-    azimuthAngle += deltaAzim;
-    const auto twoPi = glm::two_pi<float>();
-    if (azimuthAngle > twoPi) azimuthAngle -= twoPi;
-    if (azimuthAngle < 0.0f) azimuthAngle += twoPi;
-  }
-
-  void rotatePolar(float deltaPolar) {
-    polarAngle += deltaPolar;
-    const auto polarAngleCap = glm::half_pi<float>() - 0.01f;
-    if (polarAngle > polarAngleCap) polarAngle = polarAngleCap;
-    if (polarAngle < -polarAngleCap) polarAngle = -polarAngleCap;
+  void orbitPitch(float angleDelta) {
+    glm::vec3 rightVector = glm::normalize(glm::cross(position, upVector));
+    glm::mat4 rotationMatrix =
+        glm::rotate(glm::mat4(1.0f), angleDelta, rightVector);
+    position = glm::vec3(rotationMatrix * glm::vec4(position, 1.0f));
+    upVector = glm::normalize(glm::cross(rightVector, position));
   }
 
   void zoom(float deltaDistance) {
+    float radius = glm::length(position);
     radius += deltaDistance;
-    if (radius < minRadius) radius = minRadius;
+    radius = glm::max(radius, minRadius);
+    position = glm::normalize(position) * radius;
+  }
+
+  glm::mat4x4 getViewMatrix() const {
+    return glm::lookAt(position + center, center, upVector);
   }
 };
