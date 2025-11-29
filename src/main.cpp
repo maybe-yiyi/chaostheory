@@ -52,7 +52,7 @@ int main() {
     std::for_each(lorenzAttractor.getParticles().begin(),
                   lorenzAttractor.getParticles().end(),
                   [&](const Particle& particle) {
-                    sf::CircleShape shape(2);
+                    sf::CircleShape shape(1.0f);
 
                     glm::vec3 pos = particle.getPosition();
                     glm::vec4 homogenousPos{pos.x, pos.y, pos.z, 1.0f};
@@ -62,6 +62,11 @@ int main() {
                     float screenX = ndcX * 0.5f * viewportSize.x;
                     float screenY = -ndcY * 0.5f * viewportSize.y;
                     shape.setPosition({screenX, screenY});
+
+                    // set size based on depth
+                    float size = 100.0f / -viewPos.z;
+                    shape.setRadius(size);
+
                     shape.setFillColor(sf::Color::White);
 
                     window.draw(shape);
