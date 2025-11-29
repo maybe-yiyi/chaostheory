@@ -42,6 +42,10 @@ int main() {
           camera.orbitPitch(0.1f);
         } else if (keyEvent->code == sf::Keyboard::Key::S) {
           camera.orbitPitch(-0.1f);
+        } else if (keyEvent->code == sf::Keyboard::Key::Q) {
+          camera.orbitRoll(-0.1f);
+        } else if (keyEvent->code == sf::Keyboard::Key::E) {
+          camera.orbitRoll(0.1f);
         }
       }
     }

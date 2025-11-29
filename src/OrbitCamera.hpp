@@ -30,6 +30,12 @@ class OrbitCamera {
     upVector = glm::normalize(glm::cross(rightVector, position));
   }
 
+  void orbitRoll(float angleDelta) {
+    glm::mat4 rotationMatrix =
+        glm::rotate(glm::mat4(1.0f), angleDelta, position);
+    upVector = glm::vec3(rotationMatrix * glm::vec4(upVector, 1.0f));
+  }
+
   void zoom(float deltaDistance) {
     float radius = glm::length(position);
     radius += deltaDistance;
