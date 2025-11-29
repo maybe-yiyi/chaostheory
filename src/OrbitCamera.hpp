@@ -1,9 +1,6 @@
 #pragma once
-#include <glm/gtc/constants.hpp>
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/trigonometric.hpp>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
 
 class OrbitCamera {
   glm::vec3 center;

@@ -1,8 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include <functional>
-#include <glm/mat3x3.hpp>
-#include <glm/vec3.hpp>
-#include <iostream>
+#include <glm/glm.hpp>
 
 #include "Lorenz.hpp"
 #include "OrbitCamera.hpp"
